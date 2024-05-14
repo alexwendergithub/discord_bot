@@ -1,0 +1,1 @@
+simple discord bot i created to help me with anything i need in discord
