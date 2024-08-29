@@ -4,6 +4,8 @@ import pandas as pd
 import discord
 import token_bot
 from discord import app_commands
+import credentials
+import db_handler
 
 MY_GUILD = discord.Object(id=1163857844865617991) 
 #Rei caido
@@ -48,16 +50,19 @@ async def hello(interaction: discord.Interaction):
     char_name='Nome do personagem para se pegar informaçoes',
 )
 async def get_char(interaction: discord.Interaction, char_name: str):
+    db = db_handler.db_Handler(db_name=credentials.db_name ,host=credentials.db_host,username=credentials.db_username,password=credentials.db_password)
+    db.read("discordCharacters",{char_name})
     await interaction.response.send_message(f'{char_name}')
 
 @client.tree.command()
 @app_commands.describe()
 async def create_char(interaction: discord.Interaction, char_json: str, usuario: Optional[discord.Member] = None):
+    db = db_handler.db_Handler(db_name=credentials.db_name ,host=credentials.db_host,username=credentials.db_username,password=credentials.db_password)
     await interaction.response.send_message(f'{char_name}')
 
 @client.tree.command()
 @app_commands.describe()
-async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
+async def roll(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
     from dice_roll import dice_roller
     result = dice_roller.rolling(dice_to_roll)
     await interaction.response.send_message(f'{result}')
