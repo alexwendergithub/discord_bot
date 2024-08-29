@@ -51,7 +51,7 @@ async def hello(interaction: discord.Interaction):
 )
 async def get_char(interaction: discord.Interaction, char_name: str):
     db = db_handler.db_Handler(db_name=credentials.db_name ,host=credentials.db_host,username=credentials.db_username,password=credentials.db_password)
-    db.read("discordCharacters",{char_name})
+    #db.read("discordCharacters",{"name":char_name})
     await interaction.response.send_message(f'{char_name}')
 
 @client.tree.command()
@@ -66,5 +66,20 @@ async def roll(interaction:  discord.Interaction, dice_to_roll: str, usuario: Op
     from dice_roll import dice_roller
     result = dice_roller.rolling(dice_to_roll)
     await interaction.response.send_message(f'{result}')
+
+@client.tree.command()
+@app_commands.describe()
+async def spell(interaction:  discord.Interaction, spell: str):
+    from spells import spell_lister
+    result = spell_lister.search_spell(spell)
+    print(result)
+    cr_embed = discord.Embed(title=result["name"].iloc[0], description=result["desc"].iloc[0], colour=0xFFFFFF)
+    cr_embed.add_field(name="Higher levels", value=result["higher_level"].iloc[0], inline = False)
+    cr_embed.add_field(name="Range", value=result["range"].iloc[0], inline=True)
+    cr_embed.add_field(name="Level", value=result["level"].iloc[0], inline=True)
+    cr_embed.add_field(name="Duration", value=result["duration"].iloc[0], inline=True)
+    cr_embed.add_field(name="Components", value=result["components"].iloc[0], inline=True)
+    cr_embed.add_field(name="Concentration", value=result["concentration"].iloc[0], inline=True)
+    await interaction.response.send_message(embeds=[cr_embed])
 
 client.run(token_bot.token)
