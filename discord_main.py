@@ -6,9 +6,9 @@ import discord.ext
 import token_bot
 from discord import app_commands
 
-MY_GUILD = discord.Object(id=1163857844865617991) 
+#MY_GUILD = discord.Object(id=1163857844865617991) 
 #Rei caido
-#MY_GUILD = discord.Object(id=1215497910553419816)
+MY_GUILD = discord.Object(id=1215497910553419816)
 intents = discord.Intents.default()
 intents.message_content = True
 class MyClient(discord.Client):
@@ -67,9 +67,12 @@ async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuari
 @app_commands.describe()
 async def roll_iniciative(interaction: discord.Interaction, member1: discord.Member, member2: discord.Member, member3: Optional[discord.Member]= None, member4: Optional[discord.Member]= None, member5: Optional[discord.Member]= None, member6: Optional[discord.Member]= None, member7: Optional[discord.Member]= None, member8: Optional[discord.Member]= None, member9: Optional[discord.Member]= None, member10: Optional[discord.Member]= None):
     members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
-    slapped = [member.name for member in members if member is not None]
+    slapped = [member.display_name for member in members if member is not None]
+    from iniciative_roll.iniciative_roll import setEmbed
     from iniciative_roll.iniciative_roll import roll_iniciative
-    result = roll_iniciative(slapped,1)
-    await interaction.response.send_message(result)
+    result = setEmbed(roll_iniciative(slapped,1))
+    
+
+    await interaction.response.send_message(embed=result)
 
 client.run(token_bot.token)
