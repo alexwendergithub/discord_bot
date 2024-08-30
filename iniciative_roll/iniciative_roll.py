@@ -3,6 +3,10 @@ import random
 def roll20PlusMod(mod):
     return random.randint(1,20)+mod
 
+def filterMembers(memberList):
+    filteredMemberList = [member.display_name for member in memberList if member is not None]
+    return filteredMemberList
+    
 def roll_iniciative(idList, dexMod):
     idDict = {}
     for i in idList:

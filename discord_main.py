@@ -67,10 +67,9 @@ async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuari
 @app_commands.describe()
 async def roll_iniciative(interaction: discord.Interaction, member1: discord.Member, member2: discord.Member, member3: Optional[discord.Member]= None, member4: Optional[discord.Member]= None, member5: Optional[discord.Member]= None, member6: Optional[discord.Member]= None, member7: Optional[discord.Member]= None, member8: Optional[discord.Member]= None, member9: Optional[discord.Member]= None, member10: Optional[discord.Member]= None):
     members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
-    slapped = [member.display_name for member in members if member is not None]
-    from iniciative_roll.iniciative_roll import setEmbed
-    from iniciative_roll.iniciative_roll import roll_iniciative
-    result = setEmbed(roll_iniciative(slapped,1))
+    from iniciative_roll.iniciative_roll import filterMembers, roll_iniciative, setEmbed
+    filteredList = filterMembers(members)
+    result = setEmbed(roll_iniciative(filteredList,1))
     
 
     await interaction.response.send_message(embed=result)
