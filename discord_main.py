@@ -6,9 +6,9 @@ import discord.ext
 import token_bot
 from discord import app_commands
 
-#MY_GUILD = discord.Object(id=1163857844865617991) 
+MY_GUILD = discord.Object(id=1163857844865617991) 
 #Rei caido
-MY_GUILD = discord.Object(id=1215497910553419816)
+#MY_GUILD = discord.Object(id=1215497910553419816)
 intents = discord.Intents.default()
 intents.message_content = True
 class MyClient(discord.Client):
