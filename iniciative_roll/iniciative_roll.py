@@ -1,7 +1,5 @@
 import discord
-import random
-def roll20PlusMod(mod):
-    return random.randint(1,20)+mod
+from dice_roll import dice_roller
 
 def filterMembers(memberList):
     filteredMemberList = [member.display_name for member in memberList if member is not None]
@@ -11,7 +9,7 @@ def filterMembers(memberList):
 def roll_iniciative(idList, dexMod):
     idDict = {}
     for i in idList:
-        idDict[i] = roll20PlusMod(dexMod)
+         idDict[i] = dice_roller.multiRolls(1,20)[0]
     
     return dict(sorted(idDict.items(), key=lambda item: item[1], reverse=True))
 
