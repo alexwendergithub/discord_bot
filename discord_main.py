@@ -58,8 +58,8 @@ async def create_char(interaction: discord.Interaction, char_json: str, usuario:
 @client.tree.command()
 @app_commands.describe()
 async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
-    from dice_roll import dice_roller
-    result = dice_roller.rolling(dice_to_roll)
+    from dice_roll.dice_roller import mountString, processString
+    result = mountString(dice_to_roll,processString(dice_to_roll))
     await interaction.response.send_message(f'{result}')
 
 @client.tree.command()

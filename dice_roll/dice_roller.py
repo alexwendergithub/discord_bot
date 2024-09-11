@@ -6,40 +6,79 @@ converter = {
     "BON":"bonus__de_proeficiencia"
 }
 
-#function responsable for rolling dices it rolls any number of dices and add they results
-#send a display message as a result
-#return message format: RESULT <- [Dice rolls] (Number of rolls)d(Dice Type) + Constant + ...
-def rolling(dices):
-    try:
-        result = 0
-        result_text = ""
-        dices = dices.split("+")
-        for dice in dices:
-            dice = dice.split("d")
-            if len(dice)>1:
-                if result_text != "":
-                    result_text = result_text + "+ "
-                result_text_aux = "["
-                for x in range(int(dice[0])):
-                    roll = random.randint(1,int(dice[1]))
-                    result = result + roll
-                    if roll == int(dice[1]) or roll == 1:
-                        result_text_aux = result_text_aux + " **" + str(roll) + "**,"
-                    else:
-                        result_text_aux = result_text_aux + str(roll) + ","
-                result_text_aux = result_text_aux[:-1] + "]"
-                result_text = result_text + result_text_aux +dice[0] + "d" + dice[1]+ " "
+import random
+
+def multiRolls(num_dices,num_faces):
+    result = []
+    for i in range(num_dices):
+        result.append(random.randint(1,num_faces))
+    return result
+
+def splitString(string):
+    stringArr = string.split("+")
+    mod = 0
+    rollsArr = []
+    result = []
+
+    for i in stringArr:
+        if i.isdigit():
+            mod += int(i)
+        else:
+            rollsArr.append(i)
+    
+    return [rollsArr,mod]
+    
+def processString(string):
+    stringArr = splitString(string)
+    mod = stringArr[1]
+    rollsArr = stringArr[0]
+
+    processedRollsArr = []
+    for roll in rollsArr:
+        rollExpression = roll.split("d")
+        num_dice = int(rollExpression[0])
+        num_faces = int(rollExpression[1])
+        processedRollsArr.append((num_dice, num_faces))              
+    
+    result = []
+    for whathever in processedRollsArr:
+        result.append(multiRolls(whathever[0],whathever[1]))
+
+    return processedRollsArr
+
+def mountString(string, processedDicesArr):
+    stringArr = string.split("+")
+    mod = splitString(string)[1]
+
+    results = []
+    for dice in processedDicesArr:
+        results.append(multiRolls(dice[0],dice[1]))
+
+    totalSum = sum(sum(row) for row in results)
+
+    arrOfResults = []
+    for i in range(len(results)):
+        strOfResult = "["
+        for j in range(len(results[i])):
+            if results[i][j] == 1 or results[i][j] == processedDicesArr[i][1]:
+                strOfResult += f"**{results[i][j]}**"
             else:
-                if result_text != "":
-                    result_text = result_text + "+ "
-                result = result + int(dice[0])
-                result_text = result_text + dice[0] + " "
-        result_text = "`" + str(result) + "`" + " <- " + result_text 
-        print(result_text)
-        return result_text
-    except Exception as e:
-        print(e)
-        return "Error"
+                strOfResult += f"{results[i][j]}"
+            
+            if j < len(results[i]) - 1:
+                strOfResult += ", "
+        strOfResult += "]" 
+        arrOfResults.append(strOfResult)
+
+        k = 0
+    for i in range(len(stringArr)):
+
+        if 'd' in stringArr[i]:
+            stringArr[i] = arrOfResults[k] + stringArr[i]        
+            k += 1
+    stringArr[0] = f"`{totalSum+mod}` <- " + stringArr[0]
+    final = " + ".join(stringArr)
+    return final
 
 #rola uma estatistica de um personagem especifico, the characther json follows the char.json example
 def get_stat_char(char,stat_acro):
