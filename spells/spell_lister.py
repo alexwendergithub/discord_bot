@@ -4,7 +4,7 @@ spells = pd.read_json('.\spells\spells.json')
 
 def search_spell(spell_name):
     try:
-        query_search = "name == '" + spell_name + "'"
+        query_search = "name == @spell_name"
         spell = spells.query(query_search)
         print(spell)
         if spell.size > 0:
