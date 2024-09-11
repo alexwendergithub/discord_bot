@@ -1,3 +1,4 @@
 token_bot.py
 __pycache__*
 my-venv/
+credentials.py

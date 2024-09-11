@@ -1,14 +1,18 @@
 import pandas as pd
 
-spells = pd.read_json('.\spells.json')
+spells = pd.read_json('.\spells\spells.json')
 
 def search_spell(spell_name):
     try:
-        query_search = "name == ," + spell_name + "'"
-        spell = a.query(query_search)
+        query_search = "name == @spell_name"
+        spell = spells.query(query_search)
+        print(spell)
         if spell.size > 0:
             return spell
         else:
-            return "Not Found"
-    except:
+            df = pd.DataFrame()
+            df["name"] = spell_name + " not found"
+            return df
+    except Exception as e:
+        print(e)
         return "Error"
