@@ -62,10 +62,21 @@ async def create_char(interaction: discord.Interaction, char_json: str, usuario:
 
 @client.tree.command()
 @app_commands.describe()
-async def roll(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
-    from dice_roll import dice_roller
-    result = dice_roller.rolling(dice_to_roll)
+async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
+    from dice_roll.dice_roller import mountString, processString
+    result = mountString(dice_to_roll,processString(dice_to_roll))
     await interaction.response.send_message(f'{result}')
+
+@client.tree.command()
+@app_commands.describe()
+async def roll_iniciative(interaction: discord.Interaction, member1: discord.Member, member2: discord.Member, member3: Optional[discord.Member]= None, member4: Optional[discord.Member]= None, member5: Optional[discord.Member]= None, member6: Optional[discord.Member]= None, member7: Optional[discord.Member]= None, member8: Optional[discord.Member]= None, member9: Optional[discord.Member]= None, member10: Optional[discord.Member]= None):
+    from iniciative_roll.iniciative_roll import filterMembers, roll_iniciative, setEmbed
+    
+    members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
+    
+    filteredList = filterMembers(members)
+    result = setEmbed(roll_iniciative(filteredList,1))
+    await interaction.response.send_message(embed=result)
 
 @client.tree.command()
 @app_commands.describe()
