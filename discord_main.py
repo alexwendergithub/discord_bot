@@ -4,10 +4,12 @@ import pandas as pd
 import discord
 import token_bot
 from discord import app_commands
+import credentials
+import db_handler
 
-MY_GUILD = discord.Object(id=1163857844865617991) 
+#MY_GUILD = discord.Object(id=1163857844865617991) 
 #Rei caido
-#MY_GUILD = discord.Object(id=1215497910553419816)
+MY_GUILD = discord.Object(id=1215497910553419816)
 intents = discord.Intents.default()
 intents.message_content = True
 class MyClient(discord.Client):
@@ -48,11 +50,14 @@ async def hello(interaction: discord.Interaction):
     char_name='Nome do personagem para se pegar informaçoes',
 )
 async def get_char(interaction: discord.Interaction, char_name: str):
+    db = db_handler.db_Handler(db_name=credentials.db_name ,host=credentials.db_host,username=credentials.db_username,password=credentials.db_password)
+    #db.read("discordCharacters",{"name":char_name})
     await interaction.response.send_message(f'{char_name}')
 
 @client.tree.command()
 @app_commands.describe()
 async def create_char(interaction: discord.Interaction, char_json: str, usuario: Optional[discord.Member] = None):
+    db = db_handler.db_Handler(db_name=credentials.db_name ,host=credentials.db_host,username=credentials.db_username,password=credentials.db_password)
     await interaction.response.send_message(f'{char_name}')
 
 @client.tree.command()
@@ -72,5 +77,20 @@ async def roll_iniciative(interaction: discord.Interaction, member1: discord.Mem
     filteredList = filterMembers(members)
     result = setEmbed(roll_iniciative(filteredList,1))
     await interaction.response.send_message(embed=result)
+
+@client.tree.command()
+@app_commands.describe()
+async def spell(interaction:  discord.Interaction, spell: str):
+    from spells import spell_lister
+    result = spell_lister.search_spell(spell)
+    print(result)
+    cr_embed = discord.Embed(title=result["name"].iloc[0], description=result["desc"].iloc[0], colour=0xFFFFFF)
+    cr_embed.add_field(name="Higher levels", value=result["higher_level"].iloc[0], inline = False)
+    cr_embed.add_field(name="Range", value=result["range"].iloc[0], inline=True)
+    cr_embed.add_field(name="Level", value=result["level"].iloc[0], inline=True)
+    cr_embed.add_field(name="Duration", value=result["duration"].iloc[0], inline=True)
+    cr_embed.add_field(name="Components", value=result["components"].iloc[0], inline=True)
+    cr_embed.add_field(name="Concentration", value=result["concentration"].iloc[0], inline=True)
+    await interaction.response.send_message(embeds=[cr_embed])
 
 client.run(token_bot.token)

@@ -119,7 +119,7 @@ def get_stat_char(char,stat_acro):
         response = rolling(dice_to_roll + "+" + str(modifier))
     except Exception as e:
         print(e)
-        return "Error" 
+        return "Failed to roll dice" 
 
 def getModifiers(char,modifiers):
     if type(modifiers) is str:
