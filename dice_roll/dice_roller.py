@@ -6,32 +6,31 @@ converter = {
     "BON":"bonus__de_proeficiencia"
 }
 
-import random
-
+# recebe o numero de faces do dado e quantos dele rolar. Retorna uma lista do resultado de cada rolagem
 def multiRolls(num_dices,num_faces):
     result = []
     for i in range(num_dices):
         result.append(random.randint(1,num_faces))
     return result
 
+#recebe a string do dice e retorna uma lista com uma lista dos dados e outra com a soma dos modificadores
 def splitString(string):
     stringArr = string.split("+")
     mod = 0
     rollsArr = []
-    result = []
 
-    for i in stringArr:
-        if i.isdigit():
-            mod += int(i)
+    for element in stringArr:
+        if element.isdigit():
+            mod += int(element)
         else:
-            rollsArr.append(i)
+            rollsArr.append(element)
     
-    return [rollsArr,mod]
-    
+    return rollsArr, mod
+
+# recebe a string do dice e retorna uma lista com tuplas sendo o primeiro elemento da tupla o numero de dados
+# e o segundo elemento o numero de faces do dado   
 def processString(string):
-    stringArr = splitString(string)
-    mod = stringArr[1]
-    rollsArr = stringArr[0]
+    rollsArr, mod = splitString(string)
 
     processedRollsArr = []
     for roll in rollsArr:
@@ -39,46 +38,51 @@ def processString(string):
         num_dice = int(rollExpression[0])
         num_faces = int(rollExpression[1])
         processedRollsArr.append((num_dice, num_faces))              
-    
-    result = []
-    for whathever in processedRollsArr:
-        result.append(multiRolls(whathever[0],whathever[1]))
 
     return processedRollsArr
 
+#  recebe a string do dice e uma lista dos dices ja em forma de inteiros. 
+#  faz a rolagem, soma todas as rolagens e por fim cria a string atraves de iteradocoes sobre a lista de resultados.
+#  retorna uma string no formato "f`{totalSum+mod}` <- [result]XdY + ... + mod + ... + [result]AdB "
 def mountString(string, processedDicesArr):
-    stringArr = string.split("+")
-    mod = splitString(string)[1]
+    try:
+            stringArr = string.split("+")
+            mod = splitString(string)[1]
 
-    results = []
-    for dice in processedDicesArr:
-        results.append(multiRolls(dice[0],dice[1]))
+            results = [multiRolls(dice[0], dice[1]) for dice in processedDicesArr]
+            totalSum = sum(sum(row) for row in results)
 
-    totalSum = sum(sum(row) for row in results)
+            arrOfResults = []
+            for DicesIndex, rollSet in enumerate(results):
+                strOfResult = "["
 
-    arrOfResults = []
-    for i in range(len(results)):
-        strOfResult = "["
-        for j in range(len(results[i])):
-            if results[i][j] == 1 or results[i][j] == processedDicesArr[i][1]:
-                strOfResult += f"**{results[i][j]}**"
-            else:
-                strOfResult += f"{results[i][j]}"
-            
-            if j < len(results[i]) - 1:
-                strOfResult += ", "
-        strOfResult += "]" 
-        arrOfResults.append(strOfResult)
+                for rollSetIndex, roll in enumerate(rollSet):
+                    if roll == 1 or roll == processedDicesArr[DicesIndex][1]:
+                        strOfResult += f"**{roll}**"
+                    else:
+                        strOfResult += f"{roll}"
 
-        k = 0
-    for i in range(len(stringArr)):
+                    if rollSetIndex < len(rollSet) - 1:
+                        strOfResult += ", "
+    
+                strOfResult += "]"
+                arrOfResults.append(strOfResult)
 
-        if 'd' in stringArr[i]:
-            stringArr[i] = arrOfResults[k] + stringArr[i]        
-            k += 1
-    stringArr[0] = f"`{totalSum+mod}` <- " + stringArr[0]
-    final = " + ".join(stringArr)
-    return final
+            resultIndex = 0
+            for stringArrIndex, parts in enumerate(stringArr):
+
+                if 'd' in parts:
+                    stringArr[stringArrIndex] = f"{arrOfResults[resultIndex]}{parts}"        
+                    resultIndex += 1
+
+            stringArr[0] = f"`{totalSum+mod}` <- " + stringArr[0]
+            final = " + ".join(stringArr)
+            print(final)
+            return final
+    except Exception as e:
+        print(e)
+        return "error"
+
 
 #rola uma estatistica de um personagem especifico, the characther json follows the char.json example
 def get_stat_char(char,stat_acro):
