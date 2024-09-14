@@ -63,8 +63,8 @@ async def create_char(interaction: discord.Interaction, char_json: str, usuario:
 @client.tree.command()
 @app_commands.describe()
 async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
-    from dice_roll.dice_roller import mountString, processString
-    result = mountString(dice_to_roll,processString(dice_to_roll))
+    from dice_roll.dice_roller import mountString
+    result = mountString(dice_to_roll)
     await interaction.response.send_message(f'{result}')
 
 @client.tree.command()
@@ -75,7 +75,9 @@ async def roll_iniciative(interaction: discord.Interaction, member1: discord.Mem
     members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
     
     filteredList = filterMembers(members)
-    result = setEmbed(roll_iniciative(filteredList,1))
+    mockedDexMod = [0,0,0,0,0,0,0,0,0,0]
+    
+    result = setEmbed(roll_iniciative(filteredList,mockedDexMod))
     await interaction.response.send_message(embed=result)
 
 @client.tree.command()
