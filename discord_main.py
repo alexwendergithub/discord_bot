@@ -75,9 +75,8 @@ async def roll_iniciative(interaction: discord.Interaction, member1: discord.Mem
     members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
     
     filteredList = filterMembers(members)
-    mockedDexMod = [0,0,0,0,0,0,0,0,0,0]
     
-    result = setEmbed(roll_iniciative(filteredList,mockedDexMod))
+    result = setEmbed(roll_iniciative(filteredList))
     await interaction.response.send_message(embed=result)
 
 @client.tree.command()

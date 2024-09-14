@@ -6,7 +6,7 @@ def filterMembers(memberList):
     return filteredMemberList
 
 #update this function to receive a list of dex modifiers
-def roll_iniciative(idList, dexMod):
+def roll_iniciative(idList, dexMod=[0]*10):
     idDict = {}
     for i, memberId in enumerate(idList):
          idDict[memberId] = dice_roller.multiRolls(1,20)[0] + dexMod[i]
