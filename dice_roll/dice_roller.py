@@ -1,4 +1,6 @@
 import random
+import re
+import numpy
 
 converter = {
     'FOR':"forca",
@@ -8,22 +10,32 @@ converter = {
 
 # recebe o numero de faces do dado e quantos dele rolar. Retorna uma lista do resultado de cada rolagem
 def multiRolls(num_dices,num_faces):
-    result = []
-    for i in range(num_dices):
-        result.append(random.randint(1,num_faces))
-    return result
+    results = []
+    
+    for i in range(num_dices if num_dices > 0 else num_dices * -1):
+        result = random.randint(1,num_faces)
+        if num_dices < 0:
+            result *= -1 
+        results.append(result)
+
+    return results
 
 #recebe a string do dice e retorna uma lista com uma lista dos dados e outra com a soma dos modificadores
 def splitString(string):
-    stringArr = string.split("+")
+    stringArr = re.findall(r"[+-]?\d+d\d+|[+-]?\d+",string.replace(" ", ""))
+    stringArr = [num if num.startswith("-") else num.lstrip("+") for num in stringArr]
     mod = 0
     rollsArr = []
 
     for element in stringArr:
-        if element.isdigit():
+        try:
             mod += int(element)
-        else:
+        except ValueError:
             rollsArr.append(element)
+#        if element.isdigit():
+#            mod += int(element)
+#        else:
+#            rollsArr.append(element)
     
     return rollsArr, mod
 
@@ -33,7 +45,7 @@ def processString(string):
     rollsArr, mod = splitString(string)
 
     processedRollsArr = []
-    for roll in rollsArr:
+    for roll in rollsArr: 
         rollExpression = roll.split("d")
         num_dice = int(rollExpression[0])
         num_faces = int(rollExpression[1])
@@ -47,10 +59,12 @@ def processString(string):
 def mountString(string):
     try:
             processedDicesArr = processString(string)
-            stringArr = string.split("+")
+            stringArr = re.findall(r"[+-]?\d+d\d+|[+-]?\d+",string.replace(" ", ""))
+            print(processedDicesArr)
             mod = splitString(string)[1]
 
             results = [multiRolls(dice[0], dice[1]) for dice in processedDicesArr]
+            print(results)
             totalSum = sum(sum(row) for row in results)
 
             arrOfResults = []
@@ -58,6 +72,7 @@ def mountString(string):
                 strOfResult = "["
 
                 for rollSetIndex, roll in enumerate(rollSet):
+                    roll = roll if roll > 0 else roll*-1
                     if roll == 1 or roll == processedDicesArr[DicesIndex][1]:
                         strOfResult += f"**{roll}**"
                     else:
@@ -68,22 +83,28 @@ def mountString(string):
     
                 strOfResult += "]"
                 arrOfResults.append(strOfResult)
+            stringArr[0] = " " + stringArr[0]
+            print(stringArr)
 
             resultIndex = 0
             for stringArrIndex, parts in enumerate(stringArr):
 
                 if 'd' in parts:
-                    stringArr[stringArrIndex] = f"{arrOfResults[resultIndex]}{parts}"        
+                    stringArr[stringArrIndex] = f"{parts[0]} {arrOfResults[resultIndex]}{parts[1:]}"        
                     resultIndex += 1
+                elif int(parts):
+                    stringArr[stringArrIndex] = f"{parts[0]} {parts[1:]}"
 
-            stringArr[0] = f"`{totalSum+mod}` <- " + stringArr[0]
-            final = " + ".join(stringArr)
+
+            print(stringArr)
+
+            stringArr[0] = f"`{totalSum+mod}` ⟵" + stringArr[0]
+            final = " ".join(stringArr)
             print(final)
             return final
     except Exception as e:
         print(e)
         return "error"
-
 
 #rola uma estatistica de um personagem especifico, the characther json follows the char.json example
 def get_stat_char(char,stat_acro):
