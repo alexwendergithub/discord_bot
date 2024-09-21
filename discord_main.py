@@ -69,7 +69,7 @@ async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuari
 @client.tree.command()
 @app_commands.describe()
 async def roll_iniciative(interaction: discord.Interaction, member1: discord.Member, member2: discord.Member, member3: Optional[discord.Member]= None, member4: Optional[discord.Member]= None, member5: Optional[discord.Member]= None, member6: Optional[discord.Member]= None, member7: Optional[discord.Member]= None, member8: Optional[discord.Member]= None, member9: Optional[discord.Member]= None, member10: Optional[discord.Member]= None):
-    from iniciative_roll.iniciative_roll import filterMembers, roll_iniciative, setEmbed
+    from dice_roll.iniciative_roll import filterMembers, roll_iniciative, setEmbed
     
     members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
     
