@@ -44,8 +44,9 @@ def processString(string):
 #  recebe a string do dice e uma lista dos dices ja em forma de inteiros. 
 #  faz a rolagem, soma todas as rolagens e por fim cria a string atraves de iteradocoes sobre a lista de resultados.
 #  retorna uma string no formato "f`{totalSum+mod}` <- [result]XdY + ... + mod + ... + [result]AdB "
-def mountString(string, processedDicesArr):
+def mountString(string):
     try:
+            processedDicesArr = processString(string)
             stringArr = string.split("+")
             mod = splitString(string)[1]
 
@@ -116,7 +117,7 @@ def get_stat_char(char,stat_acro):
             modifier = modifier + getModifiers(char,stat["modifiers"])
         print(dice_to_roll)
         print(modifier)
-        response = rolling(dice_to_roll + "+" + str(modifier))
+        response = mountString(dice_to_roll + "+" + str(modifier))
     except Exception as e:
         print(e)
         return "Failed to roll dice" 

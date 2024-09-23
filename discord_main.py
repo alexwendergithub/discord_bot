@@ -7,9 +7,8 @@ from discord import app_commands
 import credentials
 import db_handler
 
-#MY_GUILD = discord.Object(id=1163857844865617991) 
-#Rei caido
-MY_GUILD = discord.Object(id=1215497910553419816)
+GUILD = discord.Object(id=token_bot.MY_GUILD)
+
 intents = discord.Intents.default()
 intents.message_content = True
 class MyClient(discord.Client):
@@ -29,8 +28,8 @@ class MyClient(discord.Client):
     # By doing so, we don't have to wait up to an hour until they are shown to the end-user.
     async def setup_hook(self):
         # This copies the global commands over to your guild.
-        self.tree.copy_global_to(guild=MY_GUILD)
-        await self.tree.sync(guild=MY_GUILD)
+        self.tree.copy_global_to(guild=GUILD)
+        await self.tree.sync(guild=GUILD)
 
 
 intents = discord.Intents.default()
@@ -63,19 +62,20 @@ async def create_char(interaction: discord.Interaction, char_json: str, usuario:
 @client.tree.command()
 @app_commands.describe()
 async def roll_dice(interaction:  discord.Interaction, dice_to_roll: str, usuario: Optional[discord.Member] = None):
-    from dice_roll.dice_roller import mountString, processString
-    result = mountString(dice_to_roll,processString(dice_to_roll))
+    from dice_roll.dice_roller import mountString
+    result = mountString(dice_to_roll)
     await interaction.response.send_message(f'{result}')
 
 @client.tree.command()
 @app_commands.describe()
 async def roll_iniciative(interaction: discord.Interaction, member1: discord.Member, member2: discord.Member, member3: Optional[discord.Member]= None, member4: Optional[discord.Member]= None, member5: Optional[discord.Member]= None, member6: Optional[discord.Member]= None, member7: Optional[discord.Member]= None, member8: Optional[discord.Member]= None, member9: Optional[discord.Member]= None, member10: Optional[discord.Member]= None):
-    from iniciative_roll.iniciative_roll import filterMembers, roll_iniciative, setEmbed
+    from dice_roll.iniciative_roll import filterMembers, roll_iniciative, setEmbed
     
     members = [member1, member2, member3, member4, member5, member6, member7, member8, member9, member10]
     
     filteredList = filterMembers(members)
-    result = setEmbed(roll_iniciative(filteredList,1))
+    
+    result = setEmbed(roll_iniciative(filteredList))
     await interaction.response.send_message(embed=result)
 
 @client.tree.command()
