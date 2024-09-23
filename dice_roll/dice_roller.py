@@ -32,10 +32,6 @@ def splitString(string):
             mod += int(element)
         except ValueError:
             rollsArr.append(element)
-#        if element.isdigit():
-#            mod += int(element)
-#        else:
-#            rollsArr.append(element)
     
     return rollsArr, mod
 
@@ -60,11 +56,9 @@ def mountString(string):
     try:
             processedDicesArr = processString(string)
             stringArr = re.findall(r"[+-]?\d+d\d+|[+-]?\d+",string.replace(" ", ""))
-            print(processedDicesArr)
             mod = splitString(string)[1]
 
             results = [multiRolls(dice[0], dice[1]) for dice in processedDicesArr]
-            print(results)
             totalSum = sum(sum(row) for row in results)
 
             arrOfResults = []
@@ -84,7 +78,6 @@ def mountString(string):
                 strOfResult += "]"
                 arrOfResults.append(strOfResult)
             stringArr[0] = " " + stringArr[0]
-            print(stringArr)
 
             resultIndex = 0
             for stringArrIndex, parts in enumerate(stringArr):
@@ -94,9 +87,6 @@ def mountString(string):
                     resultIndex += 1
                 elif int(parts):
                     stringArr[stringArrIndex] = f"{parts[0]} {parts[1:]}"
-
-
-            print(stringArr)
 
             stringArr[0] = f"`{totalSum+mod}` ⟵" + stringArr[0]
             final = " ".join(stringArr)
